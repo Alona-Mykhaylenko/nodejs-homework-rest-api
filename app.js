@@ -1,51 +1,128 @@
-const express = require("express");
-const logger = require("morgan");
-const cors = require("cors");
 const mongoose = require("mongoose");
+const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
+
+// For adding avatar
+const fs = require("fs/promises");
+const multer = require("multer");
+const path = require("path");
+
+// ========================
+const api = require("./api");
 
 const app = express();
 
+// Connecting to the DB
 const { DB_HOST, PORT = 3000 } = process.env;
 
 mongoose
   .connect(DB_HOST, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
+    // useCreateIndex: true,
+    // useFindAndModify: false,
   })
-  .then(() => {
+  .then(async () => {
     // app.listen(PORT);
     console.log("Database connection successful");
   })
   .catch((error) => console.log(error));
 
-const contactsRouter = require("./routes/api/contacts");
+// Обработчик тела запроса в формате json
+app.use(express.json()); // чтобы put и patch запросы считывались
+app.use(cors()); // испоьзуем мидлвару, чтобы появились кроссдоменные запросы
 
-const formatsLogger = app.get("env") === "development" ? "dev" : "short";
+app.use("/api/v1/auth", api.auth);
+app.use("/api/v1/contacts", api.contacts);
 
-app.use(logger(formatsLogger));
-app.use(cors());
-app.use(express.json());
+const usersDir = path.join(process.cwd(), "/public/avatars"); //путь к постоянной папке для сохранения аватара
+app.use("/avatars", express.static(usersDir)); //раздаем статику из постоянной папки
 
-app.use("/api/v1/contacts", contactsRouter);
-
+// Processing of non-existant requests
 app.use((_, res) => {
-  res.status(404).json({
+  res.status(404).send({
     status: "error",
     code: 404,
     message: "Not found",
   });
 });
 
+// Processing of mistakes
 app.use((error, _, res, __) => {
-  const { code = 500, message = "Server error" } = error;
-  res.status(code).json({
+  const { status = 500, message = "Server error" } = error;
+  res.status(status).json({
     status: "error",
-    code,
-    message,
+    code: status,
+    error,
   });
 });
 
-module.exports = app;
+// Preparing multer
+// Path to the temporary file
+// const tempDir = path.join(process.cwd(), "temp");
+
+// After multer takes a file from the corresponding field -
+// what should it do to it, how to save
+// const storageSettings = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, tempDir);
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.originalname);
+//   },
+//   limits: {
+//     filesize: 10000,
+//   },
+// });
+
+// Creating multer middleware
+// const uploadMiddleware = multer({
+//   storage: storageSettings,
+// });
+
+// Making request
+// app.post(
+//   "/profile",
+//   uploadMiddleware.single("avatar"),
+//   async (req, res, next) => {
+//     // console.log(req.file);
+//     try {
+//       const result = await User.create(req.body);
+//       const newUserDir = path.join(usersDir, result._id);
+//       await fs.mkdir(newUserDir);
+//       const { path: tempName, originalname } = req.file;
+
+//       const [extension] = originalname.split(".").reverse();
+//       const fileName = path.join(newUserDir, `avatar.${extension}`);
+//       await fs.rename(tempName, fileName);
+//       await User.findByIdAndUpdate(result._id, { avatar: fileName });
+//     } catch (error) {
+//       await fs.unlink(tempName); // если произошла ошибка, пытаемся удалить файл
+//       next(error);
+//     }
+//   }
+// );
+
+// Sendgrid object responsible for sending mail
+// const sgMail = require("@sendgrid/mail");
+// require("dotenv").config();
+
+// const { SENDGRID_KEY } = process.env;
+
+// sgMail.setApiKey(SENDGRID_KEY);
+
+// module.exports = app;
+
+// Create an email
+// const email = {
+//   from: "alona.mykhaylenko@gmail.com",
+//   to: "donatas.saulys@gmail.com",
+//   subject: "Test",
+//   html: "Text letter",
+// };
+
+// sgMail
+//   .send(email)
+//   .then(() => console.log("Email sent"))
+//   .catch((error) => console.log(error));
