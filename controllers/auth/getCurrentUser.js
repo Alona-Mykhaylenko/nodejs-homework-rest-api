@@ -1,4 +1,5 @@
-const getCurrentUser = (req, res, next) => {
+const getCurrentUser = async (req, res, next) => {
+  try{
   const { subscription, email } = req.user;
 
   res.json({
@@ -9,6 +10,8 @@ const getCurrentUser = (req, res, next) => {
       subscription,
     },
   });
-};
+} catch (error){
+  next(error)
+}};
 
 module.exports = getCurrentUser;

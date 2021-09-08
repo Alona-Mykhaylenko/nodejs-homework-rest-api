@@ -1,3 +1,4 @@
+const gravatar = require("gravatar");
 const { users: service } = require("../../services");
 
 const signup = async (req, res, next) => {
@@ -11,6 +12,11 @@ const signup = async (req, res, next) => {
         message: "Email in use",
       });
     }
+
+    // Create link to the user's avatar with Gravatar.
+    // Save url in the avatarUrl field during user creation
+    req.body.avatarURL = gravatar.url(email);
+
     const newUser = await service.add(req.body);
     res.status(201).json({
       status: "created",
