@@ -3,7 +3,7 @@ const { SENDGRID_KEY } = process.env;
 
 //Calling method setApiKey from the object sgMail and giving it the key (to make mail listing)
 sgMail.setApiKey(
-  "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"
+  "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"
 );
 
 // a unique function that will send emails

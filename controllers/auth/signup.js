@@ -27,7 +27,7 @@ const signup = async (req, res, next) => {
 
     // await service.update(_id, { verifyToken });
     // saving current address of the site in the variables of the surroundings
-    const { URL } = process.env;
+    const URL = "http://localhost:3000";
     const verificationEmail = {
       to: userData.email,
       subject: "Verify email",
