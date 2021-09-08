@@ -3,9 +3,11 @@ const { users: service } = require("../../services");
 
 const signin = async (req, res, next) => {
   try {
+    // getting email and password from the request body
     const { email, password } = req.body;
+    // check if user exists
     const user = await service.getOne({ email });
-    if (!user || !user.comparePassword(password)) {
+    if (!user || !user.verify || !user.comparePassword(password)) {
       return res.status(401).json({
         status: "Unauthorized",
         code: 401,

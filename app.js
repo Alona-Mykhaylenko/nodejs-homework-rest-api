@@ -58,6 +58,8 @@ app.use((error, _, res, __) => {
   });
 });
 
+module.exports = app;
+
 // Preparing multer
 // Path to the temporary file
 // const tempDir = path.join(process.cwd(), "temp");

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { Schema } = require("mongoose");
 const Joi = require("joi");
+const { nanoid } = require("nanoid");
 
 // const passport = "ЕН234565";
 // /^[А-Я]{2}[0-9]{6}$/
@@ -42,6 +43,7 @@ const userSchema = Schema({
   verifyToken: {
     type: String,
     required: [true, "Verify token is required"],
+    default: nanoid(),
   },
 });
 

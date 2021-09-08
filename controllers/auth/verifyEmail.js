@@ -3,6 +3,7 @@ const { users: service } = require("../../services");
 const verifyEmail = async (req, res, next) => {
   try {
     const { verifyToken } = req.params;
+    // Searching for the user with this token
     const user = await service.getOne({ verifyToken });
     if (!user) {
       return res.status(404).json({

@@ -5,6 +5,7 @@ const { auth: ctrl } = require("../controllers");
 const router = express.Router();
 
 const { validation, authenticate, upload } = require("../middlewares");
+
 const {
   user: { joiSchema },
 } = require("../models/schemas");
@@ -12,7 +13,8 @@ const {
 router.post("/signup", validation(joiSchema), ctrl.signup);
 // router.post("/register", ctrl.register);
 
-router.get("/verify/:verificationToken", ctrl.verifyEmail);
+router.get("/verify/:verifyToken", ctrl.verifyEmail);
+router.post("/verify", ctrl.verifyEmail);
 
 router.post("/signin", ctrl.signin);
 // router.post("/login", ctrl.login);
