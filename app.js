@@ -58,6 +58,8 @@ app.use((error, _, res, __) => {
   });
 });
 
+module.exports = app;
+
 // Preparing multer
 // Path to the temporary file
 // const tempDir = path.join(process.cwd(), "temp");
@@ -104,4 +106,25 @@ app.use((error, _, res, __) => {
 //   }
 // );
 
-module.exports = app;
+// Sendgrid object responsible for sending mail
+// const sgMail = require("@sendgrid/mail");
+// require("dotenv").config();
+
+// const { SENDGRID_KEY } = process.env;
+
+// sgMail.setApiKey(SENDGRID_KEY);
+
+// module.exports = app;
+
+// Create an email
+// const email = {
+//   from: "alona.mykhaylenko@gmail.com",
+//   to: "donatas.saulys@gmail.com",
+//   subject: "Test",
+//   html: "Text letter",
+// };
+
+// sgMail
+//   .send(email)
+//   .then(() => console.log("Email sent"))
+//   .catch((error) => console.log(error));
